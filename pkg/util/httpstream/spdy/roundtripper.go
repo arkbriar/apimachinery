@@ -32,6 +32,8 @@ import (
 	"strings"
 	"time"
 
+	ctxio "github.com/jbenet/go-context/io"
+
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -311,7 +313,7 @@ func (s *SpdyRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) 
 	responseReader := bufio.NewReader(
 		io.MultiReader(
 			bytes.NewBuffer(rawResponse),
-			conn,
+			ctxio.NewReader(req.Context(), conn),
 		),
 	)
 

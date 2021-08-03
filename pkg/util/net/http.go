@@ -40,6 +40,8 @@ import (
 	"golang.org/x/net/http2"
 
 	"k8s.io/klog/v2"
+
+	ctxio "github.com/jbenet/go-context/io"
 )
 
 // JoinPreservingTrailingSlash does a path.Join of the specified elements,
@@ -466,7 +468,7 @@ redirectLoop:
 		// Peek at the backend response.
 		rawResponse.Reset()
 		respReader := bufio.NewReader(io.TeeReader(
-			io.LimitReader(intermediateConn, maxResponseSize), // Don't read more than maxResponseSize bytes.
+			io.LimitReader(ctxio.NewReader(ctx, intermediateConn), maxResponseSize), // Don't read more than maxResponseSize bytes.
 			rawResponse)) // Save the raw response.
 		resp, err := http.ReadResponse(respReader, nil)
 		if err != nil {
