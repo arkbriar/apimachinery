@@ -298,7 +298,7 @@ func (s *SpdyRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) 
 	)
 
 	if s.followRedirects {
-		conn, rawResponse, err = utilnet.ConnectWithRedirects(req.Method, req.URL, header, req.Body, s, s.requireSameHostRedirects)
+		conn, rawResponse, err = utilnet.ConnectWithRedirects(req.Context(), req.Method, req.URL, header, req.Body, s, s.requireSameHostRedirects)
 	} else {
 		clone := utilnet.CloneRequest(req)
 		clone.Header = header

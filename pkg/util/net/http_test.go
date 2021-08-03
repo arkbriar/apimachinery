@@ -21,6 +21,7 @@ package net
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"crypto/tls"
 	"fmt"
 	"io"
@@ -415,7 +416,7 @@ func TestConnectWithRedirects(t *testing.T) {
 				}
 				return conn, err
 			})
-			conn, rawResponse, err := ConnectWithRedirects(method, u, http.Header{} /*body*/, nil, dialer, true)
+			conn, rawResponse, err := ConnectWithRedirects(context.Background(), method, u, http.Header{} /*body*/, nil, dialer, true)
 			if test.expectError {
 				require.Error(t, err, "expected request error")
 				return
