@@ -169,11 +169,12 @@ func (s *SpdyRoundTripper) dial(req *http.Request) (net.Conn, error) {
 	targetHost := netutil.CanonicalAddr(req.URL)
 
 	// proxying logic adapted from http://blog.h6t.eu/post/74098062923/golang-websocket-with-http-proxy-support
-	proxyReq := http.Request{
+	proxyReq := &http.Request{
 		Method: "CONNECT",
 		URL:    &url.URL{},
 		Host:   targetHost,
 	}
+	proxyReq = proxyReq.WithContext(req.Context())
 
 	if pa := s.proxyAuth(proxyURL); pa != "" {
 		proxyReq.Header = http.Header{}
@@ -186,7 +187,7 @@ func (s *SpdyRoundTripper) dial(req *http.Request) (net.Conn, error) {
 	}
 
 	proxyClientConn := httputil.NewProxyClientConn(proxyDialConn, nil)
-	_, err = proxyClientConn.Do(&proxyReq)
+	_, err = proxyClientConn.Do(proxyReq)
 	if err != nil && err != httputil.ErrPersistEOF {
 		return nil, err
 	}
